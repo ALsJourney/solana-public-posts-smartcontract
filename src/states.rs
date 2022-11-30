@@ -4,7 +4,6 @@ use anchor_lang::prelude::*;
 #[derive(Default)]
 pub struct UserAccount {
     pub name: String,      // 4 + 256
-    pub avatar: String,    // 4 + 2048
     pub authority: Pubkey, // 32
     pub last_post_id: u8,  // 1
     pub post_count: u8,    // 1

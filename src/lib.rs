@@ -4,19 +4,17 @@ pub mod constant;
 pub mod states;
 use crate::{constant::*, states::*};
 
-declare_id!("48jBZEvhU3FSSvRCb28ccBamJBJts7cWrLoK8X2r4Tnj");
+declare_id!("DxDyTMXpy3LQ4XfsoP44fBY4EyAUYhEdycedwPjbo4ay");
 
 #[program]
-pub mod blog_sol {
+pub mod public_posts_sol {
     use super::*;
 
-    pub fn init_user(ctx: Context<InitUser>, name: String, avatar: String) -> Result<()> {
-
+    pub fn init_user(ctx: Context<InitUser>, name: String) -> Result<()> {
         let user_account = &mut ctx.accounts.user_account;
         let authority = &mut ctx.accounts.authority;
 
         user_account.name = name;
-        user_account.avatar = avatar;
         user_account.last_post_id = 0;
         user_account.post_count = 0;
         // get the public key of the authority
@@ -29,8 +27,6 @@ pub mod blog_sol {
         // Initzialize the post and set properties
 
         // Increment the post total and the id
-
-
         let post_account = &mut ctx.accounts.post_account;
         let user_account = &mut ctx.accounts.user_account;
         let authority = &mut ctx.accounts.authority;
@@ -45,14 +41,10 @@ pub mod blog_sol {
         post_account.authority = authority.key();
 
         // Increase post_id by 1, specified in checked_add
-        user_account.last_post_id = user_account.last_post_id
-                .checked_add(1)
-                .unwrap();
+        user_account.last_post_id = user_account.last_post_id.checked_add(1).unwrap();
 
         // total posts
-        user_account.post_count = user_account.post_count
-                .checked_add(1)
-                .unwrap();
+        user_account.post_count = user_account.post_count.checked_add(1).unwrap();
 
         Ok(())
     }
@@ -69,13 +61,13 @@ pub struct InitUser<'info> {
         seeds = [USER_SEED, authority.key().as_ref()],
         bump,
         payer = authority,
-        space = 2312 + 8,
+        space = 264 + 8,
     )]
     pub user_account: Account<'info, UserAccount>,
 
     #[account(mut)]
     pub authority: Signer<'info>,
-
+    
     pub system_program: Program<'info, System>,
 }
 
@@ -90,7 +82,6 @@ pub struct CreatePost<'info> {
         space = 2376 + 8
     )]
     // 8 = account discriminator
-
     pub post_account: Account<'info, PostAccount>,
 
     // get ctx of useraccount
